@@ -1,7 +1,11 @@
 Match 3-game-Vue-3
+
 (Note:  MVVM and Vue.js)
+
 Match3 game
+
 Complete the match three game from course assignment 2 with the following features:
+
 •	Playing the game
 •	Keeping score of the game (you decide the rules)
 •	Ending the game (you decide the rules – for instance maximum number of moves)
