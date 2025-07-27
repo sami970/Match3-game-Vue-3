@@ -1,25 +1,83 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+ 
+import { checkAuthentication } from "@/services/auth.service";
 
-const routes: Array<RouteRecordRaw> = [
+const authGuard = () => {
+  if (!checkAuthentication()) {
+    router.push({ path: "/login" });
+    return false;
+  }
+  return true;
+};
+
+const loggedInGuard = () => {
+  if (checkAuthentication()) {
+    router.push({ path: "/profile" });
+    return false;
+  }
+  return true;
+};
+
+const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path: "/",
+    name: "login",
+    component: () => import("../views/LoginPage.vue"),
+    beforeEnter: [loggedInGuard],
+    // meta: {
+    //   requiresAuth: true
+    // },
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+    path: "/login",
+    name: "login",
+    component: () => import("../views/LoginPage.vue"),
+    beforeEnter: [loggedInGuard],
+    // meta: {
+    //   requiresAuth: true
+    // },
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: () => import("../views/ProfileView.vue"),
+    beforeEnter: [authGuard],
+    // meta: {
+    //   requiresAuth: false,
+    // },
+  },
+  {
+    path: "/signup",
+    name: "signup",
+    component: () => import("../views/RegisterPage.vue"),
+    beforeEnter: [loggedInGuard],
+    // meta: {
+    //   requiresAuth: true
+    // },
+  },
+  {
+    path: "/game",
+    name: "game",
+    component: () => import("../views/GameView.vue"),
+    beforeEnter: [authGuard],
+    // meta: {
+    //   requiresAuth: false,
+    // },
+  },
+  {
+    path: "/leaderboard",
+    name: "leaderboard",
+    component: () => import("../views/LeaderboardView.vue"),
+    beforeEnter: [authGuard],
+    // meta: {
+    //   requiresAuth: false,
+    // },
+  },
+];
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-})
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+});
 
-export default router
+export default router;

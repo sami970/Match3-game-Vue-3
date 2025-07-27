@@ -1,10 +1,44 @@
 <template>
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <div v-if="!store.isLoggedIn">
+      <router-link to="/login">Login</router-link>
+      <router-link to="/signup">Signup</router-link>
+    </div>
+
+    <div v-if="store.isLoggedIn">
+      <router-link to="/profile">Profile</router-link>
+      <router-link to="/game">Game</router-link>
+      <router-link to="/leaderboard">Leaderboard</router-link>
+      <button @click="handleLogout()" type="submit" class="btn btn-small ml-2 btn-secondary">Logout</button>
+    </div>
+
   </nav>
-  <router-view/>
+  <router-view />
 </template>
+<script >
+
+import { logout, checkAuthentication } from './services/auth.service'
+import { store } from './utils/store'
+
+export default {
+  data() {
+    return {
+      store
+    }
+  },
+  methods: {
+    handleLogout() {
+      logout();
+      this.store.isLoggedIn = false;
+      this.$router.replace({ path: "/login" })
+    },
+  },
+  beforeMount() {
+    
+    this.store.isLoggedIn = checkAuthentication();
+  },
+}
+</script>
 
 <style>
 #app {
@@ -22,6 +56,7 @@ nav {
 nav a {
   font-weight: bold;
   color: #2c3e50;
+  padding: 10px;
 }
 
 nav a.router-link-exact-active {
